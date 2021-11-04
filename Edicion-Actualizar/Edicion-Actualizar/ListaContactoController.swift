@@ -1,0 +1,61 @@
+//
+//  ViewController.swift
+//  Practica11JesusE
+//
+//  Created by Alumno on 11/1/21.
+//  Copyright © 2021 Alumno. All rights reserved.
+//
+
+import UIKit
+
+class ListaContactoController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var contactos : [Contacto] = []
+    var callbackActualizarTablaContactos : (() -> Void)?
+    
+    @IBOutlet weak var tvContactos: UITableView!
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return contactos.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let celda = tableView.dequeueReusableCell(withIdentifier: "celdaContacto") as! CeldaContactoController
+        celda.lblNombre.text = contactos[indexPath.row].nombre
+        celda.lblCorreo.text = contactos[indexPath.row].correo
+        celda.lblNumero.text = contactos[indexPath.row].numero
+        
+        return celda
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 150
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let contactoSeleccionado = contactos[tvContactos.indexPathForSelectedRow!.row]
+        let destino = segue.destination as! EditarContactoController
+        destino.contacto = contactoSeleccionado
+        destino.callbackActualizarTablaContactos = actualizarTablaContactos
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        
+        self.title = "Contactos"
+        
+        contactos.append(Contacto(nombre: "Karen", correo: "Karen@gmail.com", numero: "1234567"))
+        contactos.append(Contacto(nombre: "Daniela", correo: "Daniela@gmail.com", numero: "7654321"))
+        contactos.append(Contacto(nombre: "Jose", correo: "Jose@gmail.com", numero: "9876543"))
+    }
+
+    func actualizarTablaContactos() {
+        tvContactos.reloadData()
+    }
+}
+
