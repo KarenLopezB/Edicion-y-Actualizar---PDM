@@ -1,14 +1,19 @@
 //
-//  ViewController.swift
+//  viewController.swift
 //  Practica11JesusE
 //
-//  Created by Alumno on 11/1/21.
+//  Created by Alumno on 11/3/21.
 //  Copyright © 2021 Alumno. All rights reserved.
 //
 
 import UIKit
 
 class ListaContactoController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var contactos : [Contacto] = []
+
+    @IBOutlet weak var tvContactos: UITableView!
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -16,7 +21,7 @@ class ListaContactoController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return contactos.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let celda = tableView.dequeueReusableCell(withIdentifier: "celdaContacto") as! CeldaContactoController
         celda.lblNombre.text = contactos[indexPath.row].nombre
@@ -28,13 +33,26 @@ class ListaContactoController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
+        return 120
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToEdicion"{
+            let contactoSeleccionado = contactos[tvContactos.indexPathForSelectedRow!.row]
+            let destino = segue.destination as! EditarContactoController
+            destino.contacto = contactoSeleccionado
+            destino.indice = tvContactos.indexPathForSelectedRow!.row
+            destino.callbackActualizarTablaContactos = actualizarTablaContactos
+            destino.callbackEliminarContacto = eliminarContacto
+        }
+        
+        if segue.identifier == "goToCreacion"{
+            let destino = segue.destination as! AgregarContactoController
+            destino.callbackAgregarContacto = agregarContacto
+        }
     }
     
-
-    var contactos : [Contacto] = []
-
-    @IBOutlet weak var tvContactos: UITableView!
+    
     
     
     override func viewDidLoad() {
@@ -48,6 +66,19 @@ class ListaContactoController: UIViewController, UITableViewDelegate, UITableVie
         contactos.append(Contacto(nombre: "Alberto", correo: "Alberto@gmail.com", numero: "64440000"))
     }
 
+    func actualizarTablaContactos() {
+        tvContactos.reloadData()
+    }
+    
+    func eliminarContacto(indice : Int) {
+        contactos.remove(at: indice)
+        actualizarTablaContactos()
+    }
+    
+    func agregarContacto(contacto: Contacto) {
+        contactos.append(contacto)
+        actualizarTablaContactos()
+    }
 
 }
 

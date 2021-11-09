@@ -9,6 +9,11 @@
 import UIKit
 
 class ListaContactoController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var contactos : [Contacto] = []
+
+    @IBOutlet weak var tvContactos: UITableView!
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -16,7 +21,7 @@ class ListaContactoController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return contactos.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let celda = tableView.dequeueReusableCell(withIdentifier: "celdaContacto") as! CeldaContactoController
         celda.lblNombre.text = contactos[indexPath.row].nombre
@@ -30,11 +35,14 @@ class ListaContactoController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
     }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let contactoSeleccionado = contactos[tvContactos.indexPathForSelectedRow!.row]
+        let destino = segue.destination as! EditarContactoController
+        destino.contacto = contactoSeleccionado
+    }
     
-
-    var contactos : [Contacto] = []
-
-    @IBOutlet weak var tvContactos: UITableView!
+    
     
     
     override func viewDidLoad() {
@@ -48,6 +56,7 @@ class ListaContactoController: UIViewController, UITableViewDelegate, UITableVie
         contactos.append(Contacto(nombre: "Alberto", correo: "Alberto@gmail.com", numero: "64440000"))
     }
 
+    
 
 }
 
